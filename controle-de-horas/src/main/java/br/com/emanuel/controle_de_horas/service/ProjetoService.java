@@ -58,8 +58,8 @@ public class ProjetoService {
                     Nome do projeto: %s \n
                     Data de inicio: %s \n
                     Data de finalizacao: %s \n
-                    Horas de projeto: %d
-                    """);
+                    Tempo de projeto: %s
+                    """, projeto.getNomeProjeto(), projeto.getDataInicio(), projeto.getDataFim(), projeto.getHorasTrabalhadasNoProjeto());
         }
         else {
             throw new EntityNotFoundException("Projeto não encontrado");
