@@ -1,15 +1,18 @@
 package br.com.emanuel.controle_de_horas.model;
 
+import br.com.emanuel.controle_de_horas.dto.ProjectRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Projeto {
@@ -28,5 +31,11 @@ public class Projeto {
     private LocalDateTime dataFim;
 
     @Column(name = "horas_trabalhadas")
-    private Duration horasTrabalhadasNoProjeto;
+    private Long horasTrabalhadasNoProjeto;
+
+    public Projeto(ProjectRequestDTO data) {
+        if(data.getNomeProjeto() != null){
+            this.nomeProjeto = data.getNomeProjeto();
+        }
+    }
 }

@@ -1,11 +1,15 @@
 package br.com.emanuel.controle_de_horas.service;
 
+import br.com.emanuel.controle_de_horas.dto.ProjectRequestDTO;
+import br.com.emanuel.controle_de_horas.dto.ProjetoResponseDTO;
 import br.com.emanuel.controle_de_horas.model.Projeto;
 import br.com.emanuel.controle_de_horas.repository.ProjetoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -14,17 +18,52 @@ public class ProjetoService {
     @Autowired
     private ProjetoRepository repository;
 
-    public List<Projeto> getAllProjetos(){
-        return repository.findAll().stream().toList();
+    public List<ProjetoResponseDTO> getAllProjetos(){
+        return repository.findAll().stream().map(ProjetoResponseDTO::new).toList();
     }
 
-    public Projeto getProjetoByNome(String nome){
+    public ProjetoResponseDTO getProjetoByNome(String nome){
         var projeto = repository.findByNome(nome);
         if(projeto != null){
-            return projeto;
+            return new ProjetoResponseDTO(projeto);
         }
         else {
             throw new EntityNotFoundException("projeto nao encontrado");
         }
+    }
+
+    public String createProject(ProjectRequestDTO data){
+        if(data.getNomeProjeto() != null){
+            Projeto projetoSave = new Projeto(data);
+            projetoSave.setDataInicio(LocalDateTime.now());
+            return "projeto criado com sucesso!";
+        }
+        else{
+            throw new NullPointerException("o projeto está nulo");
+        }
+    }
+
+    public String terminarProjeto(String nome){
+        var projeto = repository.findByNome(nome);
+        if(projeto != null){
+            projeto.setDataFim(LocalDateTime.now());
+            var tempoDeProjeto = Duration.between(projeto.getDataInicio(), projeto.getDataFim());
+            var horasDeProjeto = tempoDeProjeto.toHours();
+            projeto.setHorasTrabalhadasNoProjeto(horasDeProjeto);
+            return String.format("""
+                    Projeto finalizado com sucesso! \n
+                    Nome do projeto: %s \n
+                    Data de inicio: %s \n
+                    Data de finalizacao: %s \n
+                    Horas de projeto: %d
+                    """);
+        }
+        else {
+            throw new EntityNotFoundException("Projeto não encontrado");
+        }
+    }
+
+    public void apagarProjeto(Long id){
+        repository.deleteById(id);
     }
 }
