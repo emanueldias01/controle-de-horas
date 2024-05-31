@@ -36,6 +36,7 @@ public class ProjetoService {
         if(data.getNomeProjeto() != null){
             Projeto projetoSave = new Projeto(data);
             projetoSave.setDataInicio(LocalDateTime.now());
+            repository.save(projetoSave);
             return "projeto criado com sucesso!";
         }
         else{
