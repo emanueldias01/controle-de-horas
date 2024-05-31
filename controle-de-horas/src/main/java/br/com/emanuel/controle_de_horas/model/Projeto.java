@@ -31,7 +31,7 @@ public class Projeto {
     private LocalDateTime dataFim;
 
     @Column(name = "horas_trabalhadas")
-    private Long horasTrabalhadasNoProjeto;
+    private String horasTrabalhadasNoProjeto;
 
     public Projeto(ProjectRequestDTO data) {
         if(data.getNomeProjeto() != null){

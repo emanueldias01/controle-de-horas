@@ -49,7 +49,9 @@ public class ProjetoService {
             projeto.setDataFim(LocalDateTime.now());
             var tempoDeProjeto = Duration.between(projeto.getDataInicio(), projeto.getDataFim());
             var horasDeProjeto = tempoDeProjeto.toHours();
-            projeto.setHorasTrabalhadasNoProjeto(horasDeProjeto);
+            var minutosDeProjeto = tempoDeProjeto.toMinutes();
+            var segundosDeProjeto = tempoDeProjeto.toSeconds();
+            projeto.setHorasTrabalhadasNoProjeto(String.format("%dH/%dM/%dS", horasDeProjeto, minutosDeProjeto, segundosDeProjeto));
             return String.format("""
                     Projeto finalizado com sucesso! \n
                     Nome do projeto: %s \n

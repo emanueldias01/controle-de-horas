@@ -11,7 +11,7 @@ public class ProjetoResponseDTO {
     private String nomeProjeto;
     private LocalDateTime dataInicio;
     private LocalDateTime dataFim;
-    private Long horasTrabalhadas;
+    private String horasTrabalhadas;
 
     public ProjetoResponseDTO(Projeto projeto){
         this.id = projeto.getId();
