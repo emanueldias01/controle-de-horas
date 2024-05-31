@@ -34,8 +34,6 @@ public class Projeto {
     private String horasTrabalhadasNoProjeto;
 
     public Projeto(ProjetoRequestDTO data) {
-        if(data.getNomeProjeto() != null){
-            this.nomeProjeto = data.getNomeProjeto();
-        }
+        this.nomeProjeto = data.getNomeProjeto();
     }
 }

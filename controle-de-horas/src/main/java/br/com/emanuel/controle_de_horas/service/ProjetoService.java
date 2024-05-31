@@ -2,6 +2,8 @@ package br.com.emanuel.controle_de_horas.service;
 
 import br.com.emanuel.controle_de_horas.dto.ProjetoRequestDTO;
 import br.com.emanuel.controle_de_horas.dto.ProjetoResponseDTO;
+import br.com.emanuel.controle_de_horas.exceptions.ProjetoExistException;
+import br.com.emanuel.controle_de_horas.exceptions.ProjetoNotFoundException;
 import br.com.emanuel.controle_de_horas.model.Projeto;
 import br.com.emanuel.controle_de_horas.repository.ProjetoRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,29 +26,35 @@ public class ProjetoService {
 
     public ProjetoResponseDTO getProjetoByNome(String nome){
         var projeto = repository.findByNomeProjeto(nome);
-        if(projeto != null){
-            return new ProjetoResponseDTO(projeto);
+        if(projeto.isPresent()){
+            return new ProjetoResponseDTO(projeto.get());
         }
         else {
-            throw new EntityNotFoundException("projeto nao encontrado");
+            throw new ProjetoNotFoundException("O projeto nao foi encontrado no banco de dados");
         }
     }
 
     public String createProject(ProjetoRequestDTO data){
-        if(data.getNomeProjeto() != null){
-            Projeto projetoSave = new Projeto(data);
-            projetoSave.setDataInicio(LocalDateTime.now());
-            repository.save(projetoSave);
-            return "projeto criado com sucesso!";
+        var projetoOptional = repository.findByNomeProjeto(data.getNomeProjeto());
+        if(data.getNomeProjeto() != null){;
+            if(projetoOptional.isEmpty()) {
+                Projeto projetoSave = new Projeto(data);
+                projetoSave.setDataInicio(LocalDateTime.now());
+                repository.save(projetoSave);
+                return "projeto criado com sucesso!";
+            }else{
+                throw new ProjetoExistException("O projeto que está tentando criar já existe");
+            }
         }
         else{
-            throw new NullPointerException("o projeto está nulo");
+            throw new RuntimeException("Inconsistência nos dados fornecidos");
         }
     }
 
     public String terminarProjeto(String nome){
-        var projeto = repository.findByNomeProjeto(nome);
-        if(projeto != null){
+        var projetoOptional = repository.findByNomeProjeto(nome);
+        if(projetoOptional.isPresent()){
+            Projeto projeto = projetoOptional.get();
             projeto.setDataFim(LocalDateTime.now());
             var tempoDeProjeto = Duration.between(projeto.getDataInicio(), projeto.getDataFim());
             var horasDeProjeto = tempoDeProjeto.toHours();
@@ -62,7 +70,7 @@ public class ProjetoService {
                     """, projeto.getNomeProjeto(), projeto.getDataInicio(), projeto.getDataFim(), projeto.getHorasTrabalhadasNoProjeto());
         }
         else {
-            throw new EntityNotFoundException("Projeto não encontrado");
+            throw new ProjetoNotFoundException("Projeto não encontrado");
         }
     }
 
