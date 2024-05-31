@@ -1,6 +1,6 @@
 package br.com.emanuel.controle_de_horas.service;
 
-import br.com.emanuel.controle_de_horas.dto.ProjectRequestDTO;
+import br.com.emanuel.controle_de_horas.dto.ProjetoRequestDTO;
 import br.com.emanuel.controle_de_horas.dto.ProjetoResponseDTO;
 import br.com.emanuel.controle_de_horas.model.Projeto;
 import br.com.emanuel.controle_de_horas.repository.ProjetoRepository;
@@ -23,7 +23,7 @@ public class ProjetoService {
     }
 
     public ProjetoResponseDTO getProjetoByNome(String nome){
-        var projeto = repository.findByNome(nome);
+        var projeto = repository.findByNomeProjeto(nome);
         if(projeto != null){
             return new ProjetoResponseDTO(projeto);
         }
@@ -32,7 +32,7 @@ public class ProjetoService {
         }
     }
 
-    public String createProject(ProjectRequestDTO data){
+    public String createProject(ProjetoRequestDTO data){
         if(data.getNomeProjeto() != null){
             Projeto projetoSave = new Projeto(data);
             projetoSave.setDataInicio(LocalDateTime.now());
@@ -44,7 +44,7 @@ public class ProjetoService {
     }
 
     public String terminarProjeto(String nome){
-        var projeto = repository.findByNome(nome);
+        var projeto = repository.findByNomeProjeto(nome);
         if(projeto != null){
             projeto.setDataFim(LocalDateTime.now());
             var tempoDeProjeto = Duration.between(projeto.getDataInicio(), projeto.getDataFim());
